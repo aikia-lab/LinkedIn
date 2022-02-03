@@ -35,21 +35,11 @@ The latest analysis was about the current state of the US Fund Market.
 This visualization of the market expectations of the ECBs interest rate
 policy was the third part of our “Central Banks” series.
 
-<p style="text-align:center">
-<iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:6893104683007717376" height="200" width="700" frameborder="0" allowfullscreen title="Embedded post">
-</iframe>
-</p>
-
 ![ECB reference rate market expectations](./Output/ecb_rate_hike.png)
 
 ### 22.01.2022 FED Hike Cycle History
 
 Expecting a speedup in hiking the reference rate we looked at the FED’s
 four most recent hike cycles.
-
-<p style="text-align:center">
-<iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:6890659498940272640" height="200" width="700" frameborder="0" allowfullscreen title="Embedded post">
-</iframe>
-</p>
 
 ![Plot of the four most recent FED hike cycles](./Output/hike_plot.png)
