@@ -1,6 +1,17 @@
 
 
 
+# Sample Input data frame
+# 
+# df <- tibble::tribble(
+#   ~term, ~value,
+#  1/12, -0.578,
+#  3/12,  -0.56, 
+#  6/12,  -0.558,
+#  9/12,   -0.532,
+#  1,       -0.398,
+# )
+
 # Neson Siegel Function using a double iteration of least spared optimization
 nelson_siegel_curve <- function(input_curve_points, 
                                 beta2_range = c(-30,30), 
