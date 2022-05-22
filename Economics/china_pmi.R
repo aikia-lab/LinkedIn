@@ -3,7 +3,6 @@
 
 library(magrittr)
 source(stringr::str_c(getwd(),"/functions/theme_linkedin.R"))
-setwd("C:/Users/Admin/Documents/Git Projects/LinkedIn")
 
 china_pmi <- read.csv("C:/Users/Admin/Desktop/china_pmi.csv") %>% dplyr::as_tibble()
 
@@ -21,7 +20,7 @@ china_pmi_plot <-
   ggplot2::geom_text(ggplot2::aes(label = text), colour = "red", hjust = 1, vjust = 1, size = 4)+
   ggplot2::scale_y_continuous(labels = function(y) y + 50) +
   ggplot2::scale_fill_manual(
-    values = c(main_color, main_color_light),
+    values = c(palette_main[c(4,1)]),
     labels = c("Manufacturing","Service")) +
   ggplot2::labs(title = "China's Purchasing Manager Index",
                 subtitle = "weakaning Growth Outlook",
@@ -31,6 +30,6 @@ china_pmi_plot <-
                 caption = "data: Bloomberg") +
   theme_linkedin_light() 
 
-  save_linkedin(china_pmi_plot, "pmi_plot")
+save_linkedin(china_pmi_plot, "pmi_plot_2")
 
 

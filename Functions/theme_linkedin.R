@@ -35,20 +35,20 @@ theme_linkedin_light <- function(
     base_family = base_family,
     base_line_size = base_line_size
   ) %+replace% ggplot2::theme(
-  plot.title = ggtext::element_markdown(
+  plot.title = ggplot2::element_text(#ggtext::element_markdown(
     colour = main_color,
     face = "bold",
     size = base_size + 24,
     hjust = 0,
-    vjust = 2,
+    vjust = 1.5,
     lineheight = 0.9
   ),
-  plot.subtitle = ggtext::element_markdown(
+  plot.subtitle = ggplot2::element_text(#ggtext::element_markdown(
     colour = main_color_light,
     face = "bold",
     size = base_size + 9,
     hjust = 0,
-    vjust = 2,
+    vjust = 1,
     lineheight = 0.9
   ),
   axis.title = ggplot2::element_text(
