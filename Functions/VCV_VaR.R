@@ -38,18 +38,24 @@ VaR_history <- function(i){
                                 .fns = ~.x/dplyr::lead(.x)-1,
                                 .names = "{.col}_return")) %>% 
     tidyr::drop_na() %>% 
-    dplyr::mutate(decay_factor = (1-decay) * decay^(dplyr::row_number()-1)) # decay factor (weights sum up to 1))
+    dplyr::mutate(decay_factor = (1-decay) * decay^(dplyr::row_number()-1)) # decay factor (weights need zo sum up to 1))
   
-  Vola_1 <- sqrt(t(as.matrix(price_table[,5]))%*% (as.matrix(price_table[,5])*price_table$decay_factor))
-  Vola_2 <- sqrt(t(as.matrix(price_table[,6]))%*% (as.matrix(price_table[,6])*price_table$decay_factor))
-  Vola_3 <- sqrt(t(as.matrix(price_table[,7]))%*% (as.matrix(price_table[,7])*price_table$decay_factor))
+  Vola_1 <- sqrt(t(as.matrix(price_table[,5])) %*% (as.matrix(price_table[,5])*price_table$decay_factor)) # Volatility Calculation using a matrix multiplication
+  Vola_2 <- sqrt(t(as.matrix(price_table[,6])) %*% (as.matrix(price_table[,6])*price_table$decay_factor))
+  Vola_3 <- sqrt(t(as.matrix(price_table[,7])) %*% (as.matrix(price_table[,7])*price_table$decay_factor))
   
-  FVaR_1 <- Vola_1 * weights[1] * 2.33#stats::quantile(dplyr::pull(price_table[,5]),c(0.01)) * -100 # *-1 to get negative sign
-  FVaR_2 <- Vola_2 * weights[2] * 2.33#stats::quantile(dplyr::pull(price_table[,6]),c(0.01)) * -100
-  FVaR_3 <- Vola_3 * weights[3] * 2.33#stats::quantile(dplyr::pull(price_table[,7]),c(0.01)) * -100  
+  # Calculating 'standalone' risk of each stock
+  FVaR_1 <- Vola_1 * weights[1] * 2.33 # The risk threshold indicates with what degree of probability one does not expect the next observation to be below this threshold. 
+  FVaR_2 <- Vola_2 * weights[2] * 2.33 # For VaR, the 99th percentile is a popular threshold. This means that statistically, 99 out of 100 observations should be above this threshold.   
+  FVaR_3 <- Vola_3 * weights[3] * 2.33 # Assuming a normal distribution of the PnL values, the standard deviation of the 99th percentile is 2.33
+
+# !!!!!!!
+# Of course, a distribution type check and adjustment would be a sensible step here. 
+# However, if you lose the symmetry in the distribution, further problems arise that would go beyond the scope here.                                     
+#### #### ###
   
   
-  # Combine for Export
+  # Combine FVaR for Export
   FVaR <- rbind(FVaR_1 %>% as.data.frame() %>% `colnames<-`("FVaR") %>% `rownames<-`(portf[1]),
                 FVaR_2 %>% as.data.frame() %>% `colnames<-`("FVaR") %>% `rownames<-`(portf[2]),
                 FVaR_3 %>% as.data.frame() %>% `colnames<-`("FVaR") %>% `rownames<-`(portf[3])
@@ -69,11 +75,12 @@ VaR_history <- function(i){
   correlation <- correlation %>% `rownames<-`(portf) %>% `colnames<-`(portf)
   
   
-  # Value at Risk
+  # Calculate Portfolio Value at Risk
   VaR_df <- tibble::tibble(VaR = as.numeric(
     sqrt((t(as.matrix(c(FVaR_1,FVaR_2,FVaR_3))) %*% correlation) %*% as.matrix(c(FVaR_1,FVaR_2,FVaR_3)))),
                           date = price_table %>% dplyr::filter(date == max(date)) %>% dplyr::pull(date))
   
+  # Returning each component
   returnlist$VaR <- VaR_df
   returnlist$correlation <- correlation
   returnlist$FVaRs <- FVaR
@@ -84,7 +91,7 @@ VaR_history <- function(i){
 
 
 
-
+# Calculating a VaR History of the last 300 Observations
 var_histo <- purrr:::map(1:300, VaR_history)
 
 
@@ -123,7 +130,7 @@ fvar_plot <- purrr::map(var_histo,3) %>%
                                     xref='paper', yref='paper'))
   
 
-# rm(cor_df)
+
 # Correlation time line
 cor_df <- tibble::tibble()
 for(i in 1:length(var_histo)){
@@ -133,7 +140,7 @@ for(i in 1:length(var_histo)){
   cor_df <- rbind(cor_df,cor_new) 
 }
 
-
+# correlation plot
 cor_plot <- cor_df %>% 
   dplyr::as_tibble() %>% 
   dplyr::filter(Var1 == portf[1],
